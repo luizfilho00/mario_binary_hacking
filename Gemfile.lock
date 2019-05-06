@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    hex_string (1.0.1)
+
+PLATFORMS
+  x64-mingw32
+
+DEPENDENCIES
+  hex_string
+
+BUNDLED WITH
+   1.17.2
