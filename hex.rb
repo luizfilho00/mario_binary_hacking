@@ -44,11 +44,17 @@ class HexEditor
     index ? (index / 2) : -1
   end
 
+  # Converte todo @dump para texto legível usando a tabela de caracteres
+  def extractAll
+    #Cria um vetor contendo 2 chars (valor hexa) em cada posição
+    dump_hexa = @dump.scan(/../) 
+    #Converte cada elemento do vetor em um char da tabela e transforma-o em uma string (join)
+    dump_hexa.map { |hex| get_char(hex) }.join
+  end
+
   # Converte a string @text para uma string contendo seus valores hexadecimais mapeados em @table
   private def convert_text_to_hexa(text)
-    hexa_text = ''
-    text.each_char { |c| hexa_text << get_hexa_code(c) }
-    hexa_text
+    text.each_char.map { |c| get_hexa_code(c) }.join
   end
 
   # Printa os valores hexadecimais separados por espaço
@@ -58,9 +64,7 @@ class HexEditor
 
   # Retorna uma string contendo o dump (representação hexadecimal) da @rom
   private def create_dump
-    tmp_dump = ''
-    @rom.each_byte.map { |b| tmp_dump << fix_hex_length(b.to_s(16)) }
-    tmp_dump
+    @rom.each_byte.map { |b| fix_hex_length(b.to_s(16)) }.join
   end
 
   # Garante que todo valor hexadecimal seja representado por 2 dígitos

@@ -16,11 +16,16 @@ def find
   puts 'Offset: ' + $hex.offset(text).to_s
 end
 
+def extract
+  puts $hex.extractAll
+end
+
 case program
 when 'finder'
   find
 when 'extractor'
-  puts 'call extractor'
+  puts "Extraindo textos..."
+  extract
 when 'injector'
   puts 'call injector'
 else
