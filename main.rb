@@ -12,7 +12,7 @@ $hex = HexEditor.new(rom, table)
 def find
   print 'Buscar texto: '
   text = gets.chomp
-  puts 'Valores hexadecimais encontrados: ' + $hex.search(text)
+  puts 'Valores hexadecimais: ' + $hex.search(text)
   puts 'Offset: ' + $hex.offset(text).to_s
 end
 
@@ -24,7 +24,7 @@ case program
 when 'finder'
   find
 when 'extractor'
-  puts "Extraindo textos..."
+  #puts "Extraindo textos..."
   extract
 when 'injector'
   puts 'call injector'

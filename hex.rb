@@ -27,9 +27,9 @@ class HexEditor
   end
 
   # Retorna o caracter representado na tabela pelo valor @hexa
-  # ou uma string vazia caso @hexa não se encontre na tablea
+  # ou uma string vazia caso @hexa não se encontre na tabela
   def get_char(hexa)
-    @table.fetch(hexa, '')
+    @table.fetch(hexa, ' ')
   end
 
   # Busca @text na dump e retorna seu valor hexadecimal
@@ -49,7 +49,8 @@ class HexEditor
     #Cria um vetor contendo 2 chars (valor hexa) em cada posição
     dump_hexa = @dump.scan(/../) 
     #Converte cada elemento do vetor em um char da tabela e transforma-o em uma string (join)
-    dump_hexa.map { |hex| get_char(hex) }.join
+    #Divide a string em linhas a cada 14 caracteres (para funcionar o 'grep')
+    dump_hexa.map { |hex| get_char(hex) }.join.gsub(/(.{28})/, "\\1\n")
   end
 
   # Converte a string @text para uma string contendo seus valores hexadecimais mapeados em @table
