@@ -5,31 +5,17 @@ class HexEditor
   def initialize(rom_file, table_file)
     begin
       @table = Hash[File.read(table_file).split("\n").map { |i| i.split('=') }]
+      @rom_file = rom_file
+      
     rescue StandardError => e
       abort('Tabela não econtrada.')
     end
     begin
-      @rom = File.read(rom_file, mode: 'rb')
+      @rom = File.read(rom_file, mode: 'r+b') 
     rescue StandardError => e
       abort('Rom não encontrada.')
     end
     @dump = create_dump
-  end
-
-  # Quantidade de hexas no @dump
-  def length
-    @dump.length / 2
-  end
-
-  # Retorna o valor hexadecimal de @char mapeado na @table
-  def get_hexa_code(char)
-    @table.key(char) || '00'
-  end
-
-  # Retorna o caracter representado na tabela pelo valor @hexa
-  # ou uma string vazia caso @hexa não se encontre na tabela
-  def get_char(hexa)
-    @table.fetch(hexa, ' ')
   end
 
   # Busca @text na dump e retorna seu valor hexadecimal
@@ -53,6 +39,52 @@ class HexEditor
     dump_hexa.map { |hex| get_char(hex) }.join.gsub(/(.{28})/, "\\1\n")
   end
 
+  # Converte todo @dump para texto legível usando a tabela de caracteres
+  def injector
+    print 'Digite uma palavra inicial para encontrar o intervalo que sera substituido'
+    print 'Palavra Inicial (Exemplo: Welcome!):  '
+    first = gets.chomp
+
+    first = offset(first)
+
+    if first == -1 
+      puts 'Palavra nao encontrada'
+    else
+      puts 'O que será colocado nesse intervalo: (Exemplo: Bem vindo! Esta e a terra dos dinossauros! Descobrimos que a princesa Peach foi sequestrada! Parece que o Bowser aprontou novamente.             )'
+      str = gets.chomp
+      str = convert_text_to_hexa(str)
+
+      str = str.
+      each_char.     # enumerator
+      each_slice(2). # bytes
+      map { |h, l| (h.to_i(16) * 16 + l.to_i(16)) }.
+      pack('C*')
+
+      IO.write(@rom_file, str, first )
+    end
+  end
+
+  ###################
+  ###################
+  ###################
+
+  # Retorna uma string contendo o dump (representação hexadecimal) da @rom
+  private def create_dump
+    @rom.each_byte.map { |b| fix_hex_length(b.to_s(16)) }.join
+  end
+
+  # Retorna o caracter representado na tabela pelo valor @hexa
+  # ou uma string vazia caso @hexa não se encontre na tabela
+  private def get_char(hexa)
+    @table.fetch(hexa, ' ')
+  end
+
+  # Retorna o valor hexadecimal de @char mapeado na @table
+  private def get_hexa_code(char)
+    @table.key(char) || '00'
+  end
+
+
   # Converte a string @text para uma string contendo seus valores hexadecimais mapeados em @table
   private def convert_text_to_hexa(text)
     text.each_char.map { |c| get_hexa_code(c) }.join
@@ -63,10 +95,6 @@ class HexEditor
     text.gsub(/(.{2})/, '\1 ').strip
   end
 
-  # Retorna uma string contendo o dump (representação hexadecimal) da @rom
-  private def create_dump
-    @rom.each_byte.map { |b| fix_hex_length(b.to_s(16)) }.join
-  end
 
   # Garante que todo valor hexadecimal seja representado por 2 dígitos
   private def fix_hex_length(s)
@@ -76,4 +104,10 @@ class HexEditor
       s.upcase
     end
   end
+
+  # Quantidade de hexas no @dump
+  private def length
+      @dump.length / 2
+  end
 end
+

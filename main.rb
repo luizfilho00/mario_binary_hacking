@@ -27,7 +27,7 @@ when 'extractor'
   #puts "Extraindo textos..."
   extract
 when 'injector'
-  puts 'call injector'
+  $hex.injector
 else
   puts 'programas: <finder> <extractor> <injector>'
 end
